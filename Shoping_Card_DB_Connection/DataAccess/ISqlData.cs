@@ -6,6 +6,7 @@ namespace Shoping_Card_DB_Connection.DataAccess
     {
         void CreateCategory(string name);
         void CreateProduct(ProductModel product);
+        void CreatePurchase(int userId, int productId);
         void Createuser(UserModel user);
         void DeleteCategory(int Id);
         void DeleteProduct(int Id);
@@ -18,9 +19,11 @@ namespace Shoping_Card_DB_Connection.DataAccess
         List<ProductModel> GetProductById(int Id);
         List<ProductModel> GetProductByName(string name);
         List<ProductModel> GetProducts();
+        List<PurchaseModel> GetPurchase(int userId, int productId);
         List<UserModel> GetUserById(int Id);
         List<UserAuthoModel> GetUserByUsername(string username);
         List<CategoryModel> SearchCategory(string? name);
         List<ProductModel> SearchProducts(string? name, int? categoryId, decimal? minPrice, decimal? maxPrice);
+        void UpdatePurchase(int id);
     }
 }

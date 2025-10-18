@@ -99,6 +99,14 @@ namespace Shoping_Card_DB_Connection.DataAccess
                                                         true);
         }
 
+        public List<PurchaseModel> GetPurchase(int userId, int productId)
+        {
+            return _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchase",
+                                                        new { userId, productId },
+                                                        connectionStringName,
+                                                        true);
+        }
+
         public void Createuser(UserModel user)
         {
             _db.SaveData<dynamic>("dbo.SP_CreateUser",
@@ -159,6 +167,22 @@ namespace Shoping_Card_DB_Connection.DataAccess
         {
             _db.SaveData<dynamic>("SP_DeleteProduct",
                                   new { Id },
+                                  connectionStringName,
+                                  true);
+        }
+
+        public void CreatePurchase(int userId, int productId)
+        {
+            _db.SaveData<dynamic>("SP_CreateNewPurchase",
+                                  new { userId, productId },
+                                  connectionStringName,
+                                  true);
+        }
+
+        public void UpdatePurchase(int id)
+        {
+            _db.SaveData<dynamic>("SP_UpdatePurchase",
+                                  new { id },
                                   connectionStringName,
                                   true);
         }

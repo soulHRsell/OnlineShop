@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC_Shoping_Card.Models;
 using Shoping_Card_DB_Connection.DataAccess;
 using Shoping_Card_DB_Connection.Models;
+using System.Security.Claims;
 using X.PagedList;
 using X.PagedList.Extensions;
 
@@ -193,6 +194,34 @@ namespace MVC_Shoping_Card.Controllers
             _db.EditProduct(saveProduct);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult AddToCart(int  id)
+        {
+            int userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var purchase = _db.GetPurchase(userId, id).FirstOrDefault();
+            
+            var product = _db.GetProductById(id).FirstOrDefault();
+
+            if(purchase == null)
+            {
+                _db.CreatePurchase(userId, id);
+                return RedirectToAction("Product", new { id = id });
+            }
+
+            if(purchase.Amount >= product.Amount)
+            {
+                ModelState.AddModelError($"{product.Name}", $"There is only {product.Amount} number of this product");
+                return RedirectToAction("Product", new { id = id });
+            }
+
+            _db.UpdatePurchase(purchase.Id);
+            return RedirectToAction("Product", new { id = id });
+
         }
 
         [Authorize(Roles = "Admin")]
