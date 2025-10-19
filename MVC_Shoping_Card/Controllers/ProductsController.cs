@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Identity.Client;
 using MVC_Shoping_Card.Models;
 using Shoping_Card_DB_Connection.DataAccess;
 using Shoping_Card_DB_Connection.Models;
@@ -36,15 +37,27 @@ namespace MVC_Shoping_Card.Controllers
             }
 
             List<ProductViewModel> productsView = new List<ProductViewModel>();
+
             for (int i = 0; i < products.Count; i++)
             {
-                ProductViewModel product = new ProductViewModel();
-                product.Id = products[i].Id;
-                product.Category = _db.GetCategoryById(products[i].CategoryId).FirstOrDefault().Name;
-                product.Name = products[i].Name;
-                product.Amount = products[i].Amount;
-                product.Info = products[i].Info;
-                product.Price = products[i].Price;
+                var category = _db.GetCategoryById(products[i].CategoryId).FirstOrDefault();
+
+                ProductViewModel product = new ProductViewModel()
+                {
+                    Id = products[i].Id,
+
+                    Category = new CategoryViewModel
+                    {
+                        Id = category.Id,
+                        Name = category.Name
+                    },
+
+                    Name = products[i].Name,
+                    Amount = products[i].Amount,
+                    Info = products[i].Info,
+                    Price = products[i].Price
+                };
+                
                 productsView.Add(product);
             }
 
@@ -64,6 +77,8 @@ namespace MVC_Shoping_Card.Controllers
         {
             var product = _db.GetProductById(id).FirstOrDefault();
 
+            var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+
             ProductViewModel productView = new ProductViewModel()
             {
                 Id = product.Id,
@@ -71,7 +86,13 @@ namespace MVC_Shoping_Card.Controllers
                 Amount = product.Amount,
                 Info = product.Info,
                 Price = product.Price,
-                Category = _db.GetCategoryById(product.CategoryId).FirstOrDefault().Name,
+
+                Category = new CategoryViewModel()
+                {
+                    Id = category.Id,
+                    Name = category.Name
+                }
+
             };
 
             return View(productView);
@@ -230,6 +251,9 @@ namespace MVC_Shoping_Card.Controllers
         {
             var product = _db.GetProductById(id).FirstOrDefault();
 
+            var catgory = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+            
+
             ProductViewModel productView = new ProductViewModel()
             {
                 Id = product.Id,
@@ -237,8 +261,14 @@ namespace MVC_Shoping_Card.Controllers
                 Amount = product.Amount,
                 Info = product.Info,
                 Price = product.Price,
-                Category = _db.GetCategoryById(product.CategoryId).FirstOrDefault().Name
-            };
+
+                Category = new CategoryViewModel()
+                {
+                    Id = catgory.Id,
+                    Name = catgory.Name,
+                }
+
+             };
 
             return View(productView);
         }
@@ -258,5 +288,6 @@ namespace MVC_Shoping_Card.Controllers
             _db.DeleteProduct(id);
             return RedirectToAction("Index");   
         }
+
     }
 }

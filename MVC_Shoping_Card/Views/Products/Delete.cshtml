@@ -1,25 +1,63 @@
 ﻿@model ProductViewModel
+
 @{
-    ViewData["title"] = "Delete Product";
+    ViewData["Title"] = "Delete Product";
 }
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="mb-4">@ViewData["title"]</h2>
+        <div class="col-lg-6 col-md-8">
 
-            <div class="container mt-4">
-                <h3>Are you sure you want to delete this Product?</h3>
-                <div>
-                    <p><strong>@Model.Name</strong></p>
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-bold text-danger mb-0">
+                            <i class="bi bi-trash3"></i> @ViewData["Title"]
+                        </h3>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+
+                    <!-- Confirmation message -->
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <div>
+                            Are you sure you want to delete this product? This action <strong>cannot be undone.</strong>
+                        </div>
+                    </div>
+
+                    <!-- Product details summary -->
+                    <div class="border rounded p-3 bg-light mb-4">
+                        <h5 class="fw-bold text-primary mb-2">@Model.Name</h5>
+                        <p class="mb-1"><strong>Category:</strong> @Model.Category.Name</p>
+                        <p class="mb-1"><strong>Price:</strong> $@Model.Price</p>
+                        <p class="mb-1"><strong>Amount:</strong> @Model.Amount</p>
+                        <p class="mb-0"><strong>Info:</strong> @Model.Info</p>
+                    </div>
+
+                    <!-- Delete confirmation form -->
+                    <form asp-action="CartItemDeleteConfirm" method="post">
+                        <input type="hidden" asp-for="Id" value="@Model.Id"/>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+
                 </div>
-
-                <form asp-action="DeleteConfirm" method="post">
-                    <input type="hidden" asp-for="Id" />
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-                </form>
-
             </div>
+
         </div>
     </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

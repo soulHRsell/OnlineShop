@@ -107,6 +107,30 @@ namespace Shoping_Card_DB_Connection.DataAccess
                                                         true);
         }
 
+        public List<PurchaseModel> GetPuchaseById(int id)
+        {
+            return _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchaseById",
+                                                        new { id },
+                                                        connectionStringName,
+                                                        true);
+        }
+
+        public List<PurchaseModel> GetPurchaseByUserId(int userId)
+        {
+            return _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchaseByUserId",
+                                                        new { userId },
+                                                        connectionStringName,
+                                                        true);
+        }
+
+        public List<PurchaseModel> GetUncompletedPurchasesByUserId(int userId)
+        {
+            return _db.LoadData<PurchaseModel, dynamic>("SP_GetUncompletedPurchasesByUserId",
+                                                        new { userId },
+                                                        connectionStringName,
+                                                        true);
+        }
+
         public void Createuser(UserModel user)
         {
             _db.SaveData<dynamic>("dbo.SP_CreateUser",
@@ -182,6 +206,30 @@ namespace Shoping_Card_DB_Connection.DataAccess
         public void UpdatePurchase(int id)
         {
             _db.SaveData<dynamic>("SP_UpdatePurchase",
+                                  new { id },
+                                  connectionStringName,
+                                  true);
+        }
+
+        public void UpdatePurchaseQuantity(int id, int quantity)
+        {
+            _db.SaveData<dynamic>("SP_UpdatePurchaseQuantity",
+                                  new { id, quantity },
+                                  connectionStringName,
+                                  true);
+        }
+
+        public void MakePurchaseComplete(int id)
+        {
+            _db.SaveData<dynamic>("SP_MakePurchaseComplete",
+                                  new { id },
+                                  connectionStringName,
+                                  true);
+        }
+
+        public void DeletePurchase(int id)
+        {
+            _db.SaveData<dynamic>("SP_DeletePurchase",
                                   new { id },
                                   connectionStringName,
                                   true);

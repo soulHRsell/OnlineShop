@@ -12,6 +12,6 @@ namespace MVC_Shoping_Card.Models
         public string Info { get; set; }
         public decimal Price { get; set; }
         [Required]
-        public string Category { get; set; }
+        public CategoryViewModel Category { get; set; }
     }
 }

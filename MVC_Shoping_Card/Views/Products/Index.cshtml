@@ -6,10 +6,23 @@
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="mb-4">@ViewData["title"]</h2>
+        <div class="col-lg-10">
 
+            <!-- Title + Create button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-primary mb-0">
+                    <i class="bi bi-box-seam"></i> @ViewData["Title"]
+                </h2>
 
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle"></i> Create Product
+                    </a>
+                }
+            </div>
+
+            <!-- 🔍 Filter Card -->
             <form method="get" asp-action="Index" class="mb-4">
                 <div class="card shadow-sm border-0">
                     <div class="card-body">
@@ -17,7 +30,7 @@
 
                             <!-- Product name -->
                             <div class="col-md-3">
-                                <label class="form-label fw-semibold">Name</label>
+                                <label class="form-label fw-semibold">Product Name</label>
                                 <input type="text" name="name" value="@ViewBag.Name"
                                        class="form-control" placeholder="Search by name..." />
                             </div>
@@ -29,7 +42,7 @@
                                     <option value="">All Categories</option>
                                     @foreach (var cat in ViewBag.Categories)
                                     {
-                                        var isSelected = ViewBag.CategoryId != null && (int)ViewBag.CategoryId == cat.Id;
+                                        bool isSelected = ViewBag.CategoryId != null && (int)ViewBag.CategoryId == cat.Id;
                                         <option value="@cat.Id" selected="@(isSelected ? "selected" : null)">
                                             @cat.Name
                                         </option>
@@ -37,26 +50,27 @@
                                 </select>
                             </div>
 
-                            <!-- Price Range -->
+                            <!-- Min price -->
                             <div class="col-md-2">
                                 <label class="form-label fw-semibold">Min Price</label>
-                                <input type="number" step="0.01" name="minPrice" value="@ViewBag.MinPrice"
-                                       class="form-control" placeholder="0.00" />
+                                <input type="number" step="0.01" name="minPrice"
+                                       value="@ViewBag.MinPrice" class="form-control" placeholder="0.00" />
                             </div>
 
+                            <!-- Max price -->
                             <div class="col-md-2">
                                 <label class="form-label fw-semibold">Max Price</label>
-                                <input type="number" step="0.01" name="maxPrice" value="@ViewBag.MaxPrice"
-                                       class="form-control" placeholder="0.00" />
+                                <input type="number" step="0.01" name="maxPrice"
+                                       value="@ViewBag.MaxPrice" class="form-control" placeholder="0.00" />
                             </div>
 
                             <!-- Buttons -->
                             <div class="col-md-2 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary flex-fill">
-                                    <i class="bi bi-search"></i> Filter
+                                    <i class="bi bi-funnel"></i> Filter
                                 </button>
                                 <a asp-action="Index" class="btn btn-outline-secondary flex-fill">
-                                    <i class="bi bi-x-circle"></i> Reset
+                                    <i class="bi bi-arrow-counterclockwise"></i> Reset
                                 </a>
                             </div>
                         </div>
@@ -64,61 +78,79 @@
                 </div>
             </form>
 
+            <!-- 📋 Product Table -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Category</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th>Info</th>
+                                <th class="text-end" style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var product in Model)
+                                {
+                                    <tr>
+                                        <td>@product.Category.Name</td>
+                                        <td>@product.Name</td>
+                                        <td>@product.Price.ToString("C")</td>
+                                        <td>@product.Amount</td>
+                                        <td>@product.Info</td>
+                                        <td class="text-end">
+                                            <a asp-action="Product" asp-route-id="@product.Id"
+                                               class="btn btn-sm btn-outline-info">
+                                                <i class="bi bi-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox"></i> No products found.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            @if(User.IsInRole("Admin"))
-            {
-                <a asp-action="Create" class="btn btn-outline-primary">Create Product</a>
-            }
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Category</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Info</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(var product in Model)
+            <!-- 📄 Pagination -->
+            <div class="mt-4">
+                @Html.PagedListPager(
+                    Model,
+                    page => Url.Action("Index", new {
+                        page,
+                        name = ViewBag.Name,
+                        categoryId = ViewBag.CategoryId,
+                        minPrice = ViewBag.MinPrice,
+                        maxPrice = ViewBag.MaxPrice
+                    }),
+                    new PagedListRenderOptions
                     {
-                        <tr>
-                            
-                            <td scope="row">@product.Category</td>
-                            <td scope="row">@product.Name</td>
-                            <td scope="row">@product.Price</td>
-                            <td scope="row">@product.Amount</td>
-                            <td scope="row">@product.Info</td>
-                            <td>
-                                <a asp-action="Product" asp-route-id=@product.Id>See More...</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-            @Html.PagedListPager(
-            Model,
-            page => Url.Action("Index", new { 
-                                                page,  name = ViewBag.Name,
-                                                categoryId = ViewBag.CategoryId,
-                                                minPrice = ViewBag.MinPrice,
-                                                maxPrice = ViewBag.MaxPrice}),
-                        new PagedListRenderOptions
-                        {
-                            LinkToFirstPageFormat = "<i class='bi bi-chevron-double-left'></i>",
-                            LinkToPreviousPageFormat = "<i class='bi bi-chevron-left'></i>",
-                            LinkToNextPageFormat = "<i class='bi bi-chevron-right'></i>",
-                            LinkToLastPageFormat = "<i class='bi bi-chevron-double-right'></i>",
-                            UlElementClasses = new[] { "pagination", "justify-content-center", "mt-4" },
-                            LiElementClasses = new[] { "page-item" },
-                            PageClasses = new[] { "page-link" },
-                            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
-                            DisplayLinkToLastPage = PagedListDisplayMode.Always,
-                            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-                            DisplayLinkToNextPage = PagedListDisplayMode.Always
-                        })
-
+                        LinkToFirstPageFormat = "<i class='bi bi-chevron-double-left'></i>",
+                        LinkToPreviousPageFormat = "<i class='bi bi-chevron-left'></i>",
+                        LinkToNextPageFormat = "<i class='bi bi-chevron-right'></i>",
+                        LinkToLastPageFormat = "<i class='bi bi-chevron-double-right'></i>",
+                        UlElementClasses = new[] { "pagination", "justify-content-center", "mt-3" },
+                        LiElementClasses = new[] { "page-item" },
+                        PageClasses = new[] { "page-link" },
+                        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                        DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                        DisplayLinkToNextPage = PagedListDisplayMode.Always
+                    })
+            </div>
         </div>
     </div>
 </div>

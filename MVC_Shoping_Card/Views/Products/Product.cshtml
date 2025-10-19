@@ -1,67 +1,86 @@
 ﻿@model ProductViewModel
 
 @{
-    ViewData["title"] = $"{Model.Name}";
+    ViewData["Title"] = Model.Name;
 }
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="mb-4">@ViewData["title"]</h2>
+        <div class="col-lg-8">
 
-            <div class="mb-3">
-                <label asp-for="Category"></label>
-                <input asp-for="Category" class="form-control" readonly />
-                <span asp-validation-for="Category" class="text-danger"></span>
+            <!-- Product Card -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="fw-bold text-primary mb-0">
+                            <i class="bi bi-box-seam"></i> @Model.Name
+                        </h2>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+
+                    <!-- Product Fields -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Category</label>
+                            <input class="form-control" value="@Model.Category.Name" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                                <input class="form-control" value="@Model.Price.ToString("0.00")" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Amount in Stock</label>
+                            <input class="form-control" value="@Model.Amount" readonly />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" readonly rows="4">@Model.Info</textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-end gap-2">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <form asp-action="Edit" asp-route-id="@Model.Id" method="get" class="d-inline">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                            </form>
+
+                            <form asp-action="Delete" asp-route-id="@Model.Id" method="get" class="d-inline">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="AddToCart" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-success">
+                                    <i class="bi bi-cart-plus"></i> Add to Cart
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Name"></label>
-                <input asp-for="Name" class="form-control" readonly />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Price"></label>
-                <input asp-for="Price" class="form-control" readonly />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Amount"></label>
-                <input asp-for="Amount" class="form-control" readonly />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Info"></label>
-                <textarea asp-for="Info" placeholder="Input Product Details" class="form-control" readonly></textarea>
-                <span asp-validation-for="Info" class="text-danger"></span>
-            </div>
-
-            @if(User.IsInRole("Admin"))
-            {
-                <form asp-action="Edit" asp-route-id="@Model.Id" method="get" style="display:inline">
-                    <button type="submit" class="btn btn-outline-warning">Edit</button>
-                </form>
-
-                <form asp-action="Delete" asp-route-id="@Model.Id" method="get" style="display:inline">
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
-                </form>
-            }
-            else
-            {
-                <form asp-action="AddToCart" asp-route-id="@Model.Id" method="post" class="mr-3">
-                    <button type="submit" class="btn btn-outline-secondary">Add To Cart</button>
-                </form>
-            }
-
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

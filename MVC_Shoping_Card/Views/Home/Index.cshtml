@@ -1,12 +1,41 @@
 ﻿@{
-    ViewData["title"] = "OnlineShop";
+    ViewData["Title"] = "OnlineShop";
 }
 
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome To OnlineShop</h1>
-    <p>
-        There is every thing that you need Enjoy exploring our shop
-    </p>
-    <a class="bi bi-basket2 text-black display-3" asp-controller="Products" asp-action="Index"></a>
+            <!-- Hero Section -->
+            <div class="p-5 rounded-4 shadow-sm bg-light">
+                <h1 class="display-4 fw-bold text-primary mb-3">
+                    Welcome to <span class="text-dark">OnlineShop</span>
+                </h1>
+
+                <p class="lead text-muted mb-4">
+                    Discover everything you need — from essentials to your favorite products.
+                    Enjoy exploring and shopping with us!
+                </p>
+
+                <!-- Call to Action -->
+                <a asp-controller="Products" asp-action="Index"
+                   class="btn btn-primary btn-lg px-4 py-2 shadow-sm">
+                    <i class="bi bi-basket2 me-2"></i> Browse Products
+                </a>
+            </div>
+
+            <!-- Optional Decorative Section -->
+            <div class="mt-5 text-muted">
+                <i class="bi bi-truck display-6 me-2 text-primary"></i>
+                <span class="fw-semibold">Fast Shipping</span>
+                &nbsp;|&nbsp;
+                <i class="bi bi-shield-check display-6 me-2 text-success"></i>
+                <span class="fw-semibold">Secure Payments</span>
+                &nbsp;|&nbsp;
+                <i class="bi bi-star-fill text-warning me-2"></i>
+                <span class="fw-semibold">Trusted by Customers</span>
+            </div>
+
+        </div>
+    </div>
 </div>

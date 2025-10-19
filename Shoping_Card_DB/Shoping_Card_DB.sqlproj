@@ -95,6 +95,12 @@
     <Build Include="dbo\Stored Procedures\SP_CreateNewPurchase.sql" />
     <Build Include="dbo\Stored Procedures\SP_GetPurchase.sql" />
     <Build Include="dbo\Stored Procedures\SP_UpdatePurchase.sql" />
+    <Build Include="dbo\Stored Procedures\SP_GetPurchaseByUserId.sql" />
+    <Build Include="dbo\Stored Procedures\SP_DeletePurchase.sql" />
+    <Build Include="dbo\Stored Procedures\SP_GetPurchaseById.sql" />
+    <Build Include="dbo\Stored Procedures\SP_UpdatePurchaseQuantity.sql" />
+    <Build Include="dbo\Stored Procedures\SP_MakePurchaseComplete.sql" />
+    <Build Include="dbo\Stored Procedures\SP_GetUncompletedPurchasesByUserId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishProfiles\Shoping_Card_DB.publish.xml" />

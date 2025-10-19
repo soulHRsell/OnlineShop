@@ -1,62 +1,98 @@
 ﻿@model ProductCreateViewModel
 
 @{
-    ViewData["title"] = "Create Product";
+    ViewData["Title"] = "Create Product";
 }
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="mb-4">@ViewData["title"]</h2>
+        <div class="col-lg-8 col-md-10">
 
-            <form asp-action="Edit" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                
-                <div class="md-3">
-                    <label asp-for="CategoryId"></label>
-                    <select asp-for=CategoryId class="form-select" aria-label="Default select example">
-                        <option selected>Open this select menu</option>
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
 
-                        @foreach (var cat in Model.Categories)
-                        {
-                            <option value="@cat.Id">@cat.Name</option>
-                        }
-                    </select>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-bold text-primary mb-0">
+                            <i class="bi bi-box2-heart"></i> @ViewData["Title"]
+                        </h3>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label asp-for="CategoryId" class="form-label fw-semibold">
+                                <i class="bi bi-tags"></i> Category
+                            </label>
+                            <select asp-for="CategoryId" class="form-select">
+                                <option value="">-- Select Category --</option>
+                                @foreach (var cat in Model.Categories)
+                                {
+                                    <option value="@cat.Id">@cat.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold">
+                                <i class="bi bi-box"></i> Product Name
+                            </label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter product name..." />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="mb-3">
+                            <label asp-for="Price" class="form-label fw-semibold">
+                                <i class="bi bi-cash-stack"></i> Price
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                                <input asp-for="Price" class="form-control" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="mb-3">
+                            <label asp-for="Amount" class="form-label fw-semibold">
+                                <i class="bi bi-boxes"></i> Stock Amount
+                            </label>
+                            <input asp-for="Amount" class="form-control" placeholder="How many units available?" />
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="mb-3">
+                            <label asp-for="Info" class="form-label fw-semibold">
+                                <i class="bi bi-info-circle"></i> Description
+                            </label>
+                            <textarea asp-for="Info" class="form-control" rows="4" placeholder="Enter product details..."></textarea>
+                            <span asp-validation-for="Info" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="reset" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise"></i> Reset
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check2-circle"></i> Save Product
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="mb-3">
-                    <label asp-for="Name"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Price"></label>
-                    <input asp-for="Price" class="form-control" />
-                    <span asp-validation-for="Amount" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Amount"></label>
-                    <input asp-for="Amount" class="form-control" />
-                    <span asp-validation-for="Amount" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Info"></label>
-                    <textarea asp-for="Info" placeholder="Input Product Details" class="form-control"></textarea>
-                    <span asp-validation-for="Info" class="text-danger"></span>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            </div>
 
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

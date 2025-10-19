@@ -38,14 +38,55 @@ namespace MVC_Shoping_Card.Controllers
             return View(userView);
         }
 
-        // GET: AccountController for Register
-        public ActionResult Register()
+        public ActionResult Cart()
         {
-            return View();
+            int userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var cartItems = _db.GetUncompletedPurchasesByUserId(userId);
+
+            List<PurchaseViewModel> cartItemsView = new List<PurchaseViewModel>();
+
+            for (int i = 0; i < cartItems.Count; i++)
+            {
+                var product = _db.GetProductById(cartItems[i].ProductId).FirstOrDefault();
+
+                var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+
+                PurchaseViewModel item = new PurchaseViewModel()
+                {
+                    Id = cartItems[i].Id,
+                    PurchaseDate = cartItems[i].PurchaseDate,
+                    UserId = cartItems[i].UserId,
+
+                    Product = new ProductViewModel()
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Amount = product.Amount,
+                        Info = product.Info,
+                        Price = product.Price,
+
+                        Category = new CategoryViewModel()
+                        {
+                            Id = category.Id,
+                            Name = category.Name,
+                        }
+
+                    },
+
+                    IsCompleted = cartItems[i].IsCompleted,
+                    IsSent = cartItems[i].IsSent,
+                    Amount = cartItems[i].Amount,
+                };
+
+                cartItemsView.Add(item);    
+            }
+
+            return View(cartItemsView);
         }
 
-        // GET: AccountController for Login
-        public ActionResult Login()
+        // GET: AccountController for Register
+        public ActionResult Register()
         {
             return View();
         }
@@ -82,6 +123,12 @@ namespace MVC_Shoping_Card.Controllers
 
             _db.Createuser(user);
             return RedirectToAction(nameof(Login));
+        }
+
+        // GET: AccountController for Login
+        public ActionResult Login()
+        {
+            return View();
         }
 
         // POST: AccountController/Create for Login
@@ -194,25 +241,89 @@ namespace MVC_Shoping_Card.Controllers
 
         }
 
-        // GET: AccountController/Delete/5
-        public ActionResult Delete(int id)
+        [Authorize]
+        public ActionResult CartItemDelete(int id)
         {
-            return View();
+            var purchase = _db.GetPuchaseById(id).FirstOrDefault();
+
+            var product = _db.GetProductById(purchase.ProductId).FirstOrDefault();
+
+            var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+
+            PurchaseViewModel purchaseView = new PurchaseViewModel()
+            {
+                Id = purchase.Id,
+                PurchaseDate = purchase.PurchaseDate,
+                UserId = purchase.UserId,
+
+                Product = new ProductViewModel()
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Amount = product.Amount,
+                    Info = product.Info,
+                    Price = product.Price,
+
+                    Category = new CategoryViewModel()
+                    {
+                        Id = category.Id,
+                        Name = category.Name,
+                    }
+
+                },
+
+                IsCompleted = purchase.IsCompleted,
+                IsSent = purchase.IsSent,
+                Amount = purchase.Amount,
+            };
+
+            return View(purchaseView);
         }
 
-        // POST: AccountController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [Authorize]
+        public ActionResult CartItemDeleteConfirm(int id)
         {
-            try
+            var purchase = _db.GetPuchaseById(id).FirstOrDefault();
+
+            if (purchase == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
+
+            _db.DeletePurchase(id);
+            return RedirectToAction("Cart");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult UpdateQuantity(int id, int quantity)
+        {
+            var purchase = _db.GetPuchaseById(id).FirstOrDefault();
+
+            if (purchase == null)
+            {
+                return NotFound();
+            }
+
+            _db.UpdatePurchaseQuantity(id, quantity);
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult Checkout(List<int> cartItemsId)
+        {
+            foreach(var Id in cartItemsId)
+            {
+                _db.MakePurchaseComplete(Id);
+            }
+
+            return Redirect("Cart");
+        }
+
     }
 }

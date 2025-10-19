@@ -1,0 +1,101 @@
+﻿@model List<PurchaseViewModel>
+
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="mb-4 text-center">
+                <i class="bi bi-cart-check"></i> My Shopping Cart
+            </h2>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> Your cart is empty.
+                </div>
+            }
+            else
+            {
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <table class="table table-striped align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@item.Product.Name</strong><br />
+                                            <small class="text-muted">@item.Product.Name</small>
+                                        </td>
+                                        <td>@item.Product.Price.ToString("C")</td>
+                                        <td>
+                                            <form asp-action="UpdateQuantity" method="post" class="d-flex">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <input type="number" name="quantity" value="@item.Amount" min="1" max="@item.Product.Amount"
+                                                       class="form-control form-control-sm me-2" style="width: 80px;" />
+                                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                                    <i class="bi bi-arrow-repeat"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td>@((item.Product.Price * item.Amount).ToString("C"))</td>
+                                        <td>
+                                            <form asp-action="CartItemDelete" method="get">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h4>
+                        Total:
+                        <span class="text-primary fw-bold">
+                            @Model.Sum(x => x.Product.Price * x.Amount).ToString("C")
+                        </span>
+                    </h4>
+
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Continue Shopping
+                        </a>
+
+                        <form asp-action="Checkout" method="post">
+                            @for (int i=0; i < Model.Count; i++)
+                            {
+                                <input type="hidden" name="cartItemsId[@i]" value="@Model[i].Id" />
+                            }
+
+                            <button class="btn btn-success" type="submit">
+                                <i class="bi bi-credit-card"></i> Proceed to Checkout
+                            </button>
+                        </form>
+
+                        @* <a asp-action="Checkout" class="btn btn-success">
+                            <i class="bi bi-credit-card"></i> Proceed to Checkout
+                        </a> *@
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
