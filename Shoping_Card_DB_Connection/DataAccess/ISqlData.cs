@@ -4,6 +4,7 @@ namespace Shoping_Card_DB_Connection.DataAccess
 {
     public interface ISqlData
     {
+        List<PurchaseModel> AdminSearchPurchases(int? id, string? name, string? status);
         void CreateCategory(string name);
         void CreateProduct(ProductModel product);
         void CreatePurchase(int userId, int productId);
@@ -24,10 +25,12 @@ namespace Shoping_Card_DB_Connection.DataAccess
         List<PurchaseModel> GetPuchaseById(int id);
         List<PurchaseModel> GetPurchase(int userId, int productId);
         List<PurchaseModel> GetPurchaseByUserId(int userId);
+        List<PurchaseModel> GetSpecificUncompletedPurchaseByUserId(int userId, int productId);
         List<PurchaseModel> GetUncompletedPurchasesByUserId(int userId);
         List<UserModel> GetUserById(int Id);
         List<UserAuthoModel> GetUserByUsername(string username);
         void MakePurchaseComplete(int id);
+        void MarkPurchaseAsSent(int id);
         List<CategoryModel> SearchCategory(string? name);
         List<PurchaseModel> SearchCompletedAndSentPurchasesByUserId(int? id, string? name, string? status, int userId);
         List<ProductModel> SearchProducts(string? name, int? categoryId, decimal? minPrice, decimal? maxPrice);

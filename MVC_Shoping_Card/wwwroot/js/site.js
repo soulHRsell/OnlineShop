@@ -1,51 +1,24 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿document.addEventListener("DOMContentLoaded", function () {
+    const themeToggle = document.getElementById("themeToggle");
+    const icon = themeToggle.querySelector("i");
 
-// Write your JavaScript code.
+    // Apply saved theme
+    const currentTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-bs-theme", currentTheme);
+    updateIcon(currentTheme);
 
-<style>
-    body {
-        background - color: #f8f9fa;
-        }
+    // Add smooth transition after load (prevents blinking)
+    setTimeout(() => document.body.classList.add("theme-transition-enabled"), 100);
 
-    /* Navbar styling */
-    .navbar {
-        background - color: #ffffff !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        }
+    // Toggle theme
+    themeToggle.addEventListener("click", () => {
+        let newTheme = document.documentElement.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-bs-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateIcon(newTheme);
+    });
 
-    .navbar-brand i {
-        color: #0d6efd;
-        }
-
-    .nav-link {
-        transition: color 0.2s ease-in-out;
-        }
-
-    .nav-link:hover {
-        color: #0d6efd !important;
-        }
-
-    /* Footer styling */
-    footer {
-        background - color: #ffffff;
-    padding: 1rem 0;
-    font-size: 0.9rem;
-    border-top: 1px solid #dee2e6;
-    color: #6c757d;
-        }
-
-    footer a {
-        color: #0d6efd;
-    text-decoration: none;
-        }
-
-    footer a:hover {
-        text - decoration: underline;
-        }
-
-    /* Dropdown styling */
-    .dropdown-menu {
-        border - radius: 0.5rem;
-        }
-</style>
+    function updateIcon(theme) {
+        icon.className = theme === "dark" ? "bi bi-sun-fill" : "bi bi-moon-fill";
+    }
+});

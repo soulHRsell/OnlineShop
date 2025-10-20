@@ -7,33 +7,38 @@
         <div class="col-lg-8">
 
             <!-- Hero Section -->
-            <div class="p-5 rounded-4 shadow-sm bg-light">
-                <h1 class="display-4 fw-bold text-primary mb-3">
-                    Welcome to <span class="text-dark">OnlineShop</span>
+            <div class="hero-section p-5 rounded-4 shadow-sm">
+                <h1 class="display-4 fw-bold mb-3">
+                    Welcome to <span class="brand-text">OnlineShop</span>
                 </h1>
 
-                <p class="lead text-muted mb-4">
+                <p class="lead hero-subtext mb-4">
                     Discover everything you need — from essentials to your favorite products.
                     Enjoy exploring and shopping with us!
                 </p>
 
-                <!-- Call to Action -->
                 <a asp-controller="Products" asp-action="Index"
-                   class="btn btn-primary btn-lg px-4 py-2 shadow-sm">
+                   class="btn btn-primary btn-lg px-4 py-2 shadow-sm browse-btn">
                     <i class="bi bi-basket2 me-2"></i> Browse Products
                 </a>
             </div>
 
-            <!-- Optional Decorative Section -->
-            <div class="mt-5 text-muted">
-                <i class="bi bi-truck display-6 me-2 text-primary"></i>
-                <span class="fw-semibold">Fast Shipping</span>
-                &nbsp;|&nbsp;
-                <i class="bi bi-shield-check display-6 me-2 text-success"></i>
-                <span class="fw-semibold">Secure Payments</span>
-                &nbsp;|&nbsp;
-                <i class="bi bi-star-fill text-warning me-2"></i>
-                <span class="fw-semibold">Trusted by Customers</span>
+            <!-- Features -->
+            <div class="features mt-5 text-muted">
+                <div class="d-flex justify-content-center flex-wrap gap-4">
+                    <div>
+                        <i class="bi bi-truck display-6 me-2 text-primary"></i>
+                        <span class="fw-semibold">Fast Shipping</span>
+                    </div>
+                    <div>
+                        <i class="bi bi-shield-check display-6 me-2 text-success"></i>
+                        <span class="fw-semibold">Secure Payments</span>
+                    </div>
+                    <div>
+                        <i class="bi bi-star-fill text-warning display-6 me-2"></i>
+                        <span class="fw-semibold">Trusted by Customers</span>
+                    </div>
+                </div>
             </div>
 
         </div>

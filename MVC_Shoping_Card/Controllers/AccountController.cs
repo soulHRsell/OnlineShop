@@ -112,12 +112,12 @@ namespace MVC_Shoping_Card.Controllers
 
                 var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
 
+
                 PurchaseViewModel item = new PurchaseViewModel()
                 {
                     Id = purchases[i].Id,
                     PurchaseDate = purchases[i].PurchaseDate,
                     UserId = purchases[i].UserId,
-
                     Product = new ProductViewModel()
                     {
                         Id = product.Id,
@@ -131,7 +131,6 @@ namespace MVC_Shoping_Card.Controllers
                             Id = category.Id,
                             Name = category.Name,
                         }
-
                     },
 
                     IsCompleted = purchases[i].IsCompleted,
@@ -149,6 +148,55 @@ namespace MVC_Shoping_Card.Controllers
             var pagedPurchases = purchasesView.ToPagedList(pageNumber, pageSize);
             
             return View(pagedPurchases);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult ManagePurchases(int? id, string? name, string? status, int? page)
+        {
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            var purchases = _db.AdminSearchPurchases(id, name, status);
+
+            var purchaseViewList = purchases.Select(p =>
+            {
+                var product = _db.GetProductById(p.ProductId).FirstOrDefault();
+                var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+                var user = _db.GetUserById(p.UserId).FirstOrDefault();
+
+                return new PurchaseViewModel
+                {
+                    Id = p.Id,
+                    PurchaseDate = p.PurchaseDate,
+                    IsCompleted = p.IsCompleted,
+                    IsSent = p.IsSent,
+                    Amount = p.Amount,
+                    UserId = p.UserId,
+                    UserName = user.Username,
+                    
+                    Product = new ProductViewModel
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        Category = new CategoryViewModel { Id = category.Id, Name = category.Name }
+                    }
+                };
+            }).ToList();
+
+            ViewBag.Id = id;
+            ViewBag.Name = name;
+            ViewBag.Status = status;
+
+            return View(purchaseViewList.ToPagedList(pageNumber, pageSize));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult MarkAsSent(int id)
+        {
+            _db.MarkPurchaseAsSent(id); 
+            return RedirectToAction("ManagePurchases");
         }
 
         // GET: AccountController for Register

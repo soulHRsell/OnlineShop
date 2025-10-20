@@ -8,6 +8,6 @@ begin
 	select *
 	from Purchase
 	where UserId = @userId
-	ORDER BY pu.PurchaseDate DESC;
+	ORDER BY PurchaseDate DESC;
 
 end

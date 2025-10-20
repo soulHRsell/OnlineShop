@@ -6,6 +6,8 @@
     [CategoryId] INT            NOT NULL,
     [Price] DECIMAL NOT NULL, 
     PRIMARY KEY CLUSTERED ([ID] ASC),
-    CONSTRAINT [FK_Product_Category] FOREIGN KEY ([CategoryId]) REFERENCES [dbo].[Category] ([ID])
+    CONSTRAINT [FK_Product_Category] FOREIGN KEY ([CategoryId]) REFERENCES [dbo].[Category] ([ID]) ON DELETE CASCADE
 );
 
+
+GO

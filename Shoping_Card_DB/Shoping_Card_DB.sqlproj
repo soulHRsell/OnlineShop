@@ -103,6 +103,9 @@
     <Build Include="dbo\Stored Procedures\SP_GetUncompletedPurchasesByUserId.sql" />
     <Build Include="dbo\Stored Procedures\SP_GetCompletedAndSentPurchasesByUserId.sql" />
     <Build Include="dbo\Stored Procedures\SP_SearchCompletedAndSentPurchasesByUserId.sql" />
+    <Build Include="dbo\Stored Procedures\SP_MarkPurchaseAsSent.sql" />
+    <Build Include="dbo\Stored Procedures\SP_AdminSearchPurchases.sql" />
+    <Build Include="dbo\Stored Procedures\SP_GetSpecificUncompletedPurchaseByUserId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishProfiles\Shoping_Card_DB.publish.xml" />

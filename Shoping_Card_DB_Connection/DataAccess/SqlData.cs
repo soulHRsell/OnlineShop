@@ -131,6 +131,14 @@ namespace Shoping_Card_DB_Connection.DataAccess
                                                         true);
         }
 
+        public List<PurchaseModel> GetSpecificUncompletedPurchaseByUserId(int userId, int productId)
+        {
+            return _db.LoadData<PurchaseModel, dynamic>("SP_GetSpecificUncompletedPurchaseByUserId",
+                                                        new { userId, productId },
+                                                        connectionStringName,
+                                                        true);
+        }
+
         public List<PurchaseModel> GetCompletedAndSentPurchasesByUserId(int userId)
         {
             return _db.LoadData<PurchaseModel, dynamic>("SP_GetCompletedAndSentPurchasesByUserId",
@@ -139,13 +147,31 @@ namespace Shoping_Card_DB_Connection.DataAccess
                                                         true);
         }
 
+        public List<PurchaseModel> AdminSearchPurchases(int? id, string? name, string? status)
+        {
+            return _db.LoadData<PurchaseModel, dynamic>(
+                "SP_AdminSearchPurchases",
+                new
+                {
+                    Id = id == 0 ? null : id,
+                    productName = string.IsNullOrEmpty(name) ? null : name,
+                    status = string.IsNullOrEmpty(status) ? null : status
+                },
+                connectionStringName,
+                true
+            );
+        }
+
         public List<PurchaseModel> SearchCompletedAndSentPurchasesByUserId(int? id, string? name, string? status, int userId)
         {
             return _db.LoadData<PurchaseModel, dynamic>("SP_SearchCompletedAndSentPurchasesByUserId",
-                                                        new { Id = id == 0 ? null : id,
-                                                        productName = String.IsNullOrEmpty(name) ? null : name, 
-                                                        status = String.IsNullOrEmpty(status) ? null : status,
-                                                        UserId = userId },
+                                                        new
+                                                        {
+                                                            Id = id == 0 ? null : id,
+                                                            productName = String.IsNullOrEmpty(name) ? null : name,
+                                                            status = String.IsNullOrEmpty(status) ? null : status,
+                                                            UserId = userId
+                                                        },
                                                         connectionStringName,
                                                         true);
         }
@@ -252,6 +278,11 @@ namespace Shoping_Card_DB_Connection.DataAccess
                                   new { id },
                                   connectionStringName,
                                   true);
+        }
+
+        public void MarkPurchaseAsSent(int id)
+        {
+            _db.SaveData("SP_MarkPurchaseAsSent", new { Id = id }, connectionStringName, true);
         }
     }
 }

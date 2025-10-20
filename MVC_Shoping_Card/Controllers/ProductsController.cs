@@ -224,25 +224,35 @@ namespace MVC_Shoping_Card.Controllers
         {
             int userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var purchase = _db.GetPurchase(userId, id).FirstOrDefault();
-            
+            var purchase = _db.GetSpecificUncompletedPurchaseByUserId(userId, id).FirstOrDefault();
             var product = _db.GetProductById(id).FirstOrDefault();
 
-            if(purchase == null)
+            if (product == null)
+            {
+                TempData["ErrorMessage"] = "Product not found.";
+                return RedirectToAction("Index", "Products");
+            }
+
+            if (product.Amount <= 0)
+            {
+                TempData["ErrorMessage"] = $"'{product.Name}' is no longer available.";
+            }
+            else if (purchase == null)
             {
                 _db.CreatePurchase(userId, id);
-                return RedirectToAction("Product", new { id = id });
+                TempData["SuccessMessage"] = $"'{product.Name}' added to your cart.";
             }
-
-            if(purchase.Amount >= product.Amount)
+            else if (purchase.Amount >= product.Amount)
             {
-                ModelState.AddModelError($"{product.Name}", $"There is only {product.Amount} number of this product");
-                return RedirectToAction("Product", new { id = id });
+                TempData["ErrorMessage"] = $"Only {product.Amount} units of '{product.Name}' are available.";
+            }
+            else
+            {
+                _db.UpdatePurchase(purchase.Id);
+                TempData["SuccessMessage"] = $"Quantity for '{product.Name}' updated in your cart.";
             }
 
-            _db.UpdatePurchase(purchase.Id);
-            return RedirectToAction("Product", new { id = id });
-
+            return RedirectToAction("Product", "Products", new { id = id });
         }
 
         [Authorize(Roles = "Admin")]

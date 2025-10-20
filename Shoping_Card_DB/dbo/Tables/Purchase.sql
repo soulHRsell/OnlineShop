@@ -7,7 +7,7 @@
     [IsSent] BIT NOT NULL DEFAULT 0, 
     [Amount] INT NOT NULL DEFAULT 1, 
     PRIMARY KEY CLUSTERED ([ID] ASC),
-    CONSTRAINT [FK_Purchase_Product] FOREIGN KEY ([ProductId]) REFERENCES [dbo].[Product] ([ID]),
-    CONSTRAINT [FK_Purchase_User] FOREIGN KEY ([UserId]) REFERENCES [dbo].[User] ([ID])
+    CONSTRAINT [FK_Purchase_Product] FOREIGN KEY ([ProductId]) REFERENCES [dbo].[Product] ([ID]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Purchase_User] FOREIGN KEY ([UserId]) REFERENCES [dbo].[User] ([ID]) ON DELETE CASCADE
 );
 
