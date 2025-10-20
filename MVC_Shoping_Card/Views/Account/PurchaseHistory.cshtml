@@ -1,0 +1,147 @@
+﻿@model IPagedList<PurchaseViewModel>
+@{
+    ViewData["Title"] = "Purchase History";
+}
+
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="bi bi-receipt"></i> @ViewData["Title"]
+        </h2>
+        <p class="text-muted">View your completed and sent purchases, search, and filter easily.</p>
+    </div>
+
+    <!-- 🔍 Search & Filter -->
+    <form method="get" asp-action="PurchaseHistory" class="mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+
+                    <!-- Purchase Id -->
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label fw-semibold">Purchase ID</label>
+                        <input type="number" name="Id" value="@ViewBag.Id" class="form-control" placeholder="e.g. 1024" />
+                    </div>
+
+                    <!-- Product name -->
+                    <div class="col-md-4 col-sm-6">
+                        <label class="form-label fw-semibold">Product Name</label>
+                        <input type="text" name="name" value="@ViewBag.Name"
+                               class="form-control" placeholder="Search by product name..." />
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label fw-semibold">Status</label>
+                        @{
+                            string status = ViewBag.Status as string;
+                            bool selCompleted = status == "Completed";
+                            bool selSent = status == "Sent";
+                            bool selPending = status == "Pending";
+                        }
+                        <select name="status" class="form-select">
+                            <option value="">All</option>
+                            <option value="Completed" selected="@(selCompleted ? "selected" : null)">Completed</option>
+                            <option value="Sent" selected="@(selSent ? "selected" : null)">Sent</option>
+                            <option value="Pending" selected="@(selPending ? "selected" : null)">Pending</option>
+                        </select>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-md-2 d-flex gap-2 justify-content-end">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        <a asp-action="PurchaseHistory" class="btn btn-outline-secondary flex-fill">
+                            <i class="bi bi-arrow-counterclockwise"></i> Reset
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- 🧾 Purchases Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th>ID</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Total Price</th>
+                                <th>Purchase Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@item.Id</td>
+                                    <td>@item.Product.Name</td>
+                                    <td>@item.Product.Category.Name</td>
+                                    <td>@item.Amount</td>
+                                    <td class="fw-bold text-success">$@(item.Product.Price * item.Amount)</td>
+                                    <td>@item.PurchaseDate.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        @if (item.IsSent)
+                                        {
+                                            <span class="badge bg-success">Sent</span>
+                                        }
+                                        else if (item.IsCompleted)
+                                        {
+                                            <span class="badge bg-primary">Completed</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Pending</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox text-secondary" style="font-size:3rem;"></i>
+                    <p class="text-muted mt-3 mb-0">No purchases found matching your filters.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 📄 Pagination -->
+    <div class="mt-4 d-flex justify-content-center">
+        @Html.PagedListPager(
+            Model,
+            page => Url.Action("PurchaseHistory", new {
+                page,
+                Id = ViewBag.Id,
+                name = ViewBag.Name,
+                status = ViewBag.Status
+            }),
+            new PagedListRenderOptions
+            {
+                UlElementClasses = new[] { "pagination", "pagination-sm", "justify-content-center" },
+                LiElementClasses = new[] { "page-item" },
+                PageClasses = new[] { "page-link" },
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                LinkToFirstPageFormat = "<i class='bi bi-chevron-double-left'></i>",
+                LinkToPreviousPageFormat = "<i class='bi bi-chevron-left'></i>",
+                LinkToNextPageFormat = "<i class='bi bi-chevron-right'></i>",
+                LinkToLastPageFormat = "<i class='bi bi-chevron-double-right'></i>"
+            })
+    </div>
+</div>

@@ -8,5 +8,6 @@ begin
 	select *
 	from Category ca
 	where LOWER(ca.[Name]) = LOWER(@name)
+	ORDER BY [Name] ASC;
 
 end

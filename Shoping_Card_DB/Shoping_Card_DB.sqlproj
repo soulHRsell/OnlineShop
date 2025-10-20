@@ -101,6 +101,8 @@
     <Build Include="dbo\Stored Procedures\SP_UpdatePurchaseQuantity.sql" />
     <Build Include="dbo\Stored Procedures\SP_MakePurchaseComplete.sql" />
     <Build Include="dbo\Stored Procedures\SP_GetUncompletedPurchasesByUserId.sql" />
+    <Build Include="dbo\Stored Procedures\SP_GetCompletedAndSentPurchasesByUserId.sql" />
+    <Build Include="dbo\Stored Procedures\SP_SearchCompletedAndSentPurchasesByUserId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishProfiles\Shoping_Card_DB.publish.xml" />

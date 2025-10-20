@@ -8,5 +8,6 @@ begin
 	select *
 	from Purchase
 	where ID = @Id
+	ORDER BY ID ASC;
 
 end

@@ -8,5 +8,6 @@ begin
 	select *
 	from Purchase
 	where UserId = @userId and IsCompleted = 0
+	ORDER BY ID ASC;
 
 end

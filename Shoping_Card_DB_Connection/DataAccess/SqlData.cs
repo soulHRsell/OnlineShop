@@ -31,7 +31,7 @@ namespace Shoping_Card_DB_Connection.DataAccess
 
         public List<ProductModel> GetProducts()
         {
-            return _db.LoadData<ProductModel, dynamic>("select * from ViewAllProducts",
+            return _db.LoadData<ProductModel, dynamic>("select * from ViewAllProducts ORDER BY [Name] ASC",
                                                         new { },
                                                         connectionStringName,
                                                         false);
@@ -69,7 +69,7 @@ namespace Shoping_Card_DB_Connection.DataAccess
 
         public List<CategoryModel> GetAllCategories()
         {
-            return _db.LoadData<CategoryModel, dynamic>("select * from ViewAllCategories",
+            return _db.LoadData<CategoryModel, dynamic>("select * from ViewAllCategories ORDER BY [Name] ASC",
                                                         new { },
                                                         connectionStringName,
                                                         false);
@@ -127,6 +127,25 @@ namespace Shoping_Card_DB_Connection.DataAccess
         {
             return _db.LoadData<PurchaseModel, dynamic>("SP_GetUncompletedPurchasesByUserId",
                                                         new { userId },
+                                                        connectionStringName,
+                                                        true);
+        }
+
+        public List<PurchaseModel> GetCompletedAndSentPurchasesByUserId(int userId)
+        {
+            return _db.LoadData<PurchaseModel, dynamic>("SP_GetCompletedAndSentPurchasesByUserId",
+                                                        new { userId },
+                                                        connectionStringName,
+                                                        true);
+        }
+
+        public List<PurchaseModel> SearchCompletedAndSentPurchasesByUserId(int? id, string? name, string? status, int userId)
+        {
+            return _db.LoadData<PurchaseModel, dynamic>("SP_SearchCompletedAndSentPurchasesByUserId",
+                                                        new { Id = id == 0 ? null : id,
+                                                        productName = String.IsNullOrEmpty(name) ? null : name, 
+                                                        status = String.IsNullOrEmpty(status) ? null : status,
+                                                        UserId = userId },
                                                         connectionStringName,
                                                         true);
         }

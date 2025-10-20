@@ -8,5 +8,6 @@ begin
 	Select ca.ID, ca.[Name]
 	From Category ca
 	Where ca.ID = @Id
+	ORDER BY [Name] ASC;
 
 end

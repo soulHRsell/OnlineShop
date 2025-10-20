@@ -17,6 +17,7 @@ namespace Shoping_Card_DB_Connection.DataAccess
         List<CategoryModel> GetAllCategories();
         List<CategoryModel> GetCategoryById(int Id);
         List<CategoryModel> GetCategoryByName(string name);
+        List<PurchaseModel> GetCompletedAndSentPurchasesByUserId(int userId);
         List<ProductModel> GetProductById(int Id);
         List<ProductModel> GetProductByName(string name);
         List<ProductModel> GetProducts();
@@ -28,6 +29,7 @@ namespace Shoping_Card_DB_Connection.DataAccess
         List<UserAuthoModel> GetUserByUsername(string username);
         void MakePurchaseComplete(int id);
         List<CategoryModel> SearchCategory(string? name);
+        List<PurchaseModel> SearchCompletedAndSentPurchasesByUserId(int? id, string? name, string? status, int userId);
         List<ProductModel> SearchProducts(string? name, int? categoryId, decimal? minPrice, decimal? maxPrice);
         void UpdatePurchase(int id);
         void UpdatePurchaseQuantity(int id, int quantity);

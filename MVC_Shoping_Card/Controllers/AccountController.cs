@@ -5,6 +5,7 @@ using MVC_Shoping_Card.Models;
 using Shoping_Card_DB_Connection.DataAccess;
 using Shoping_Card_DB_Connection.Models;
 using System.Security.Claims;
+using X.PagedList.Extensions;
 
 namespace MVC_Shoping_Card.Controllers
 {
@@ -83,6 +84,71 @@ namespace MVC_Shoping_Card.Controllers
             }
 
             return View(cartItemsView);
+        }
+
+        [Authorize]
+        public ActionResult PurchaseHistory(int? id, string? name, string? status, int? page)
+        {
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            int userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            List<PurchaseModel> purchases = new List<PurchaseModel>();  
+
+            if (String.IsNullOrEmpty(name) && id == null && String.IsNullOrEmpty(status))
+            {
+                purchases = _db.GetPurchaseByUserId(userId);
+            }
+            else
+            {
+                purchases = _db.SearchCompletedAndSentPurchasesByUserId(id ?? 0, name, status, userId);
+            }
+
+            List<PurchaseViewModel> purchasesView = new List<PurchaseViewModel>();
+
+            for (int i = 0; i < purchases.Count; i++)
+            {
+                var product = _db.GetProductById(purchases[i].ProductId).FirstOrDefault();
+
+                var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+
+                PurchaseViewModel item = new PurchaseViewModel()
+                {
+                    Id = purchases[i].Id,
+                    PurchaseDate = purchases[i].PurchaseDate,
+                    UserId = purchases[i].UserId,
+
+                    Product = new ProductViewModel()
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Amount = product.Amount,
+                        Info = product.Info,
+                        Price = product.Price,
+
+                        Category = new CategoryViewModel()
+                        {
+                            Id = category.Id,
+                            Name = category.Name,
+                        }
+
+                    },
+
+                    IsCompleted = purchases[i].IsCompleted,
+                    IsSent = purchases[i].IsSent,
+                    Amount = purchases[i].Amount,
+                };
+
+                purchasesView.Add(item);
+            }
+
+            ViewBag.Id = id;
+            ViewBag.Name = name;
+            ViewBag.Status = status;
+
+            var pagedPurchases = purchasesView.ToPagedList(pageNumber, pageSize);
+            
+            return View(pagedPurchases);
         }
 
         // GET: AccountController for Register

@@ -8,5 +8,6 @@ begin
 	select u.ID, u.Username, u.[Password], u.isAdmin
 	from [User] u
 	where u.Username = @username
-	
+	ORDER BY Username ASC;
+
 end

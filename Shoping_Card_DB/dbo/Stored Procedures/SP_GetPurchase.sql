@@ -9,5 +9,6 @@ begin
 	select p.*
 	from Purchase p
 	where p.UserId = @userId and p.ProductId = @productId
+	ORDER BY ID ASC;
 
 end
