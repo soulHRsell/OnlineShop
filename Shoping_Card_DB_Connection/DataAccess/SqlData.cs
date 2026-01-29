@@ -1,5 +1,6 @@
 ﻿using Shoping_Card_DB_Connection.Databases;
 using Shoping_Card_DB_Connection.Models;
+using System.Runtime.CompilerServices;
 
 namespace Shoping_Card_DB_Connection.DataAccess
 {
@@ -13,49 +14,49 @@ namespace Shoping_Card_DB_Connection.DataAccess
             _db = db;
         }
 
-        public List<UserModel> GetUserById(int Id)
+        public async Task<List<UserModel>> GetUserById(int Id)
         {
-            return _db.LoadData<UserModel, dynamic>("SP_GetUserById",
+            return await _db.LoadData<UserModel, dynamic>("SP_GetUserById",
                                 new { Id },
                                 connectionStringName,
                                 true);
         }
 
-        public List<UserAuthoModel> GetUserByUsername(string username)
+        public async Task<List<UserAuthoModel>> GetUserByUsername(string username)
         {
-            return _db.LoadData<UserAuthoModel, dynamic>("dbo.SP_GetUserByUsername",
+            return await _db.LoadData<UserAuthoModel, dynamic>("dbo.SP_GetUserByUsername",
                                                          new { username },
                                                          connectionStringName,
                                                          true);
         }
 
-        public List<ProductModel> GetProducts()
+        public async Task<List<ProductModel>> GetProducts()
         {
-            return _db.LoadData<ProductModel, dynamic>("select * from ViewAllProducts ORDER BY [Name] ASC",
+            return await _db.LoadData<ProductModel, dynamic>("select * from ViewAllProducts ORDER BY [Name] ASC",
                                                         new { },
                                                         connectionStringName,
                                                         false);
         }
 
-        public List<ProductModel> GetProductById(int Id)
+        public async Task<List<ProductModel>> GetProductById(int Id)
         {
-            return _db.LoadData<ProductModel, dynamic>("SP_GetProductById",
+            return await _db.LoadData<ProductModel, dynamic>("SP_GetProductById",
                                                        new { Id },
                                                        connectionStringName,
                                                        true);
         }
 
-        public List<ProductModel> GetProductByName(string name)
+        public async Task<List<ProductModel>> GetProductByName(string name)
         {
-            return _db.LoadData<ProductModel, dynamic>("SP_GetProductByName",
+            return await _db.LoadData<ProductModel, dynamic>("SP_GetProductByName",
                                                        new { name },
                                                        connectionStringName,
                                                        true);
         }
 
-        public List<ProductModel> SearchProducts(string? name, int? categoryId, decimal? minPrice, decimal? maxPrice)
+        public async Task<List<ProductModel>> SearchProducts(string? name, int? categoryId, decimal? minPrice, decimal? maxPrice)
         {
-            return _db.LoadData<ProductModel, dynamic>("SP_SearchProducts",
+            return await _db.LoadData<ProductModel, dynamic>("SP_SearchProducts",
                                                        new
                                                        {
                                                            Name = String.IsNullOrEmpty(name) ? null : name,
@@ -67,89 +68,89 @@ namespace Shoping_Card_DB_Connection.DataAccess
                                                        true);
         }
 
-        public List<CategoryModel> GetAllCategories()
+        public async Task<List<CategoryModel>> GetAllCategories()
         {
-            return _db.LoadData<CategoryModel, dynamic>("select * from ViewAllCategories ORDER BY [Name] ASC",
+            return await _db.LoadData<CategoryModel, dynamic>("select * from ViewAllCategories ORDER BY [Name] ASC",
                                                         new { },
                                                         connectionStringName,
                                                         false);
         }
 
-        public List<CategoryModel> GetCategoryById(int Id)
+        public async Task<List<CategoryModel>> GetCategoryById(int Id)
         {
-            return _db.LoadData<CategoryModel, dynamic>("SP_GetCategoryById",
+            return await _db.LoadData<CategoryModel, dynamic>("SP_GetCategoryById",
                                                         new { Id },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<CategoryModel> GetCategoryByName(string name)
+        public async Task<List<CategoryModel>> GetCategoryByName(string name)
         {
-            return _db.LoadData<CategoryModel, dynamic>("SP_GetCategoryByName",
+            return await _db.LoadData<CategoryModel, dynamic>("SP_GetCategoryByName",
                                                         new { name },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<CategoryModel> SearchCategory(string? name)
+        public async Task<List<CategoryModel>> SearchCategory(string? name)
         {
-            return _db.LoadData<CategoryModel, dynamic>("SP_SearchCategory",
+            return await _db.LoadData<CategoryModel, dynamic>("SP_SearchCategory",
                                                         new { Name = String.IsNullOrEmpty(name) ? null : name },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<PurchaseModel> GetPurchase(int userId, int productId)
+        public async Task<List<PurchaseModel>> GetPurchase(int userId, int productId)
         {
-            return _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchase",
+            return await _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchase",
                                                         new { userId, productId },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<PurchaseModel> GetPuchaseById(int id)
+        public async Task<List<PurchaseModel>> GetPuchaseById(int id)
         {
-            return _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchaseById",
+            return await _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchaseById",
                                                         new { id },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<PurchaseModel> GetPurchaseByUserId(int userId)
+        public async Task<List<PurchaseModel>> GetPurchaseByUserId(int userId)
         {
-            return _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchaseByUserId",
+            return await _db.LoadData<PurchaseModel, dynamic>("SP_GetPurchaseByUserId",
                                                         new { userId },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<PurchaseModel> GetUncompletedPurchasesByUserId(int userId)
+        public async Task<List<PurchaseModel>> GetUncompletedPurchasesByUserId(int userId)
         {
-            return _db.LoadData<PurchaseModel, dynamic>("SP_GetUncompletedPurchasesByUserId",
+            return await _db.LoadData<PurchaseModel, dynamic>("SP_GetUncompletedPurchasesByUserId",
                                                         new { userId },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<PurchaseModel> GetSpecificUncompletedPurchaseByUserId(int userId, int productId)
+        public async Task<List<PurchaseModel>> GetSpecificUncompletedPurchaseByUserId(int userId, int productId)
         {
-            return _db.LoadData<PurchaseModel, dynamic>("SP_GetSpecificUncompletedPurchaseByUserId",
+            return await _db.LoadData<PurchaseModel, dynamic>("SP_GetSpecificUncompletedPurchaseByUserId",
                                                         new { userId, productId },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<PurchaseModel> GetCompletedAndSentPurchasesByUserId(int userId)
+        public async Task<List<PurchaseModel>> GetCompletedAndSentPurchasesByUserId(int userId)
         {
-            return _db.LoadData<PurchaseModel, dynamic>("SP_GetCompletedAndSentPurchasesByUserId",
+            return await _db.LoadData<PurchaseModel, dynamic>("SP_GetCompletedAndSentPurchasesByUserId",
                                                         new { userId },
                                                         connectionStringName,
                                                         true);
         }
 
-        public List<PurchaseModel> AdminSearchPurchases(int? id, string? name, string? status)
+        public async Task<List<PurchaseModel>> AdminSearchPurchases(int? id, string? name, string? status)
         {
-            return _db.LoadData<PurchaseModel, dynamic>(
+            return await _db.LoadData<PurchaseModel, dynamic>(
                 "SP_AdminSearchPurchases",
                 new
                 {
@@ -162,9 +163,9 @@ namespace Shoping_Card_DB_Connection.DataAccess
             );
         }
 
-        public List<PurchaseModel> SearchCompletedAndSentPurchasesByUserId(int? id, string? name, string? status, int userId)
+        public async Task<List<PurchaseModel>> SearchCompletedAndSentPurchasesByUserId(int? id, string? name, string? status, int userId)
         {
-            return _db.LoadData<PurchaseModel, dynamic>("SP_SearchCompletedAndSentPurchasesByUserId",
+            return await _db.LoadData<PurchaseModel, dynamic>("SP_SearchCompletedAndSentPurchasesByUserId",
                                                         new
                                                         {
                                                             Id = id == 0 ? null : id,
@@ -176,113 +177,113 @@ namespace Shoping_Card_DB_Connection.DataAccess
                                                         true);
         }
 
-        public void Createuser(UserModel user)
+        public async Task Createuser(UserModel user)
         {
-            _db.SaveData<dynamic>("dbo.SP_CreateUser",
+            await _db.SaveData<dynamic>("dbo.SP_CreateUser",
                                   new { user.Username, user.Password, user.EmailAddress, user.FirstName, user.LastName, user.Country, user.State, user.City, user.ZipCode, user.CardNumber },
                                   connectionStringName,
                                   true);
         }
 
-        public void EditUserInfo(int Id, UserModel user)
+        public async Task EditUserInfo(int Id, UserModel user)
         {
-            _db.SaveData<dynamic>("SP_EditUserInfo",
+            await _db.SaveData<dynamic>("SP_EditUserInfo",
                                   new { Id, user.Username, user.EmailAddress, user.FirstName, user.LastName, user.Country, user.State, user.City, user.ZipCode, user.CardNumber },
                                   connectionStringName,
                                   true);
         }
 
-        public void CreateCategory(string name)
+        public async Task CreateCategory(string name)
         {
-            _db.SaveData<dynamic>("SP_CreateNewCategory",
+            await _db.SaveData<dynamic>("SP_CreateNewCategory",
                                   new { name },
                                   connectionStringName,
                                   true);
         }
 
-        public void EditCategory(CategoryModel category)
+        public async Task EditCategory(CategoryModel category)
         {
-            _db.SaveData<dynamic>("SP_EditCategoryById",
+            await _db.SaveData<dynamic>("SP_EditCategoryById",
                                   new { category.Id, category.Name },
                                   connectionStringName,
                                   true);
         }
 
-        public void DeleteCategory(int Id)
+        public async Task DeleteCategory(int Id)
         {
-            _db.SaveData<dynamic>("SP_DeleteCategory",
+            await _db.SaveData<dynamic>("SP_DeleteCategory",
                                   new { Id },
                                   connectionStringName,
                                   true);
         }
 
-        public void CreateProduct(ProductModel product)
+        public async Task CreateProduct(ProductModel product)
         {
-            _db.SaveData<dynamic>("SP_CreateNewProduct",
+            await _db.SaveData<dynamic>("SP_CreateNewProduct",
                                   new { product.Name, product.Amount, product.Info, product.Price, product.CategoryId },
                                   connectionStringName,
                                   true);
         }
 
-        public void EditProduct(ProductModel product)
+        public async Task EditProduct(ProductModel product)
         {
-            _db.SaveData<dynamic>("SP_EditProduct",
+            await _db.SaveData<dynamic>("SP_EditProduct",
                                   new { product.Id, product.Name, product.Amount, product.Info, product.CategoryId, product.Price },
                                   connectionStringName,
                                   true);
         }
 
-        public void DeleteProduct(int Id)
+        public async Task DeleteProduct(int Id)
         {
-            _db.SaveData<dynamic>("SP_DeleteProduct",
+            await _db.SaveData<dynamic>("SP_DeleteProduct",
                                   new { Id },
                                   connectionStringName,
                                   true);
         }
 
-        public void CreatePurchase(int userId, int productId)
+        public async Task CreatePurchase(int userId, int productId)
         {
-            _db.SaveData<dynamic>("SP_CreateNewPurchase",
+            await _db.SaveData<dynamic>("SP_CreateNewPurchase",
                                   new { userId, productId },
                                   connectionStringName,
                                   true);
         }
 
-        public void UpdatePurchase(int id)
+        public async Task UpdatePurchase(int id)
         {
-            _db.SaveData<dynamic>("SP_UpdatePurchase",
+            await _db.SaveData<dynamic>("SP_UpdatePurchase",
                                   new { id },
                                   connectionStringName,
                                   true);
         }
 
-        public void UpdatePurchaseQuantity(int id, int quantity)
+        public async Task UpdatePurchaseQuantity(int id, int quantity)
         {
-            _db.SaveData<dynamic>("SP_UpdatePurchaseQuantity",
+            await _db.SaveData<dynamic>("SP_UpdatePurchaseQuantity",
                                   new { id, quantity },
                                   connectionStringName,
                                   true);
         }
 
-        public void MakePurchaseComplete(int id)
+        public async Task MakePurchaseComplete(int id)
         {
-            _db.SaveData<dynamic>("SP_MakePurchaseComplete",
+            await _db.SaveData<dynamic>("SP_MakePurchaseComplete",
                                   new { id },
                                   connectionStringName,
                                   true);
         }
 
-        public void DeletePurchase(int id)
+        public async Task DeletePurchase(int id)
         {
-            _db.SaveData<dynamic>("SP_DeletePurchase",
+            await _db.SaveData<dynamic>("SP_DeletePurchase",
                                   new { id },
                                   connectionStringName,
                                   true);
         }
 
-        public void MarkPurchaseAsSent(int id)
+        public async Task MarkPurchaseAsSent(int id)
         {
-            _db.SaveData("SP_MarkPurchaseAsSent", new { Id = id }, connectionStringName, true);
+            await _db.SaveData("SP_MarkPurchaseAsSent", new { Id = id }, connectionStringName, true);
         }
     }
 }

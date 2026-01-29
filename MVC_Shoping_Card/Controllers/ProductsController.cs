@@ -20,7 +20,7 @@ namespace MVC_Shoping_Card.Controllers
             _db = db;
         }
 
-        public ActionResult Index(string? name, int? categoryId, decimal? minPrice, decimal? maxPrice, int? page)
+        public async Task<ActionResult> Index(string? name, int? categoryId, decimal? minPrice, decimal? maxPrice, int? page)
         {
             int pageSize = 10;
             int pageNumber = page ?? 1;
@@ -29,18 +29,18 @@ namespace MVC_Shoping_Card.Controllers
 
             if (String.IsNullOrEmpty(name) && categoryId == null &&  minPrice == null && maxPrice == null)
             {
-                products = _db.GetProducts();
+                products = await _db.GetProducts();
             }
             else
             {
-                products = _db.SearchProducts(name, categoryId ?? 0, minPrice ?? 0, maxPrice ?? 0);
+                products = await _db.SearchProducts(name, categoryId ?? 0, minPrice ?? 0, maxPrice ?? 0);
             }
 
             List<ProductViewModel> productsView = new List<ProductViewModel>();
 
             for (int i = 0; i < products.Count; i++)
             {
-                var category = _db.GetCategoryById(products[i].CategoryId).FirstOrDefault();
+                var category = (await _db.GetCategoryById(products[i].CategoryId)).FirstOrDefault();
 
                 ProductViewModel product = new ProductViewModel()
                 {
@@ -57,7 +57,7 @@ namespace MVC_Shoping_Card.Controllers
                     Info = products[i].Info,
                     Price = products[i].Price
                 };
-                
+
                 productsView.Add(product);
             }
 
@@ -66,18 +66,18 @@ namespace MVC_Shoping_Card.Controllers
             ViewBag.CategoryId = categoryId;
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
-            ViewBag.Categories = _db.GetAllCategories();
+            ViewBag.Categories = await _db.GetAllCategories();
 
             var pagedProducts = productsView.ToPagedList(pageNumber, pageSize);
 
             return View(pagedProducts);
         }
 
-        public ActionResult Product(int id)
+        public async Task<ActionResult> Product(int id)
         {
-            var product = _db.GetProductById(id).FirstOrDefault();
+            var product = (await _db.GetProductById(id)).FirstOrDefault();
 
-            var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+            var category = (await _db.GetCategoryById(product.CategoryId)).FirstOrDefault();
 
             ProductViewModel productView = new ProductViewModel()
             {
@@ -100,9 +100,9 @@ namespace MVC_Shoping_Card.Controllers
 
         [Authorize(Roles = "Admin")]
         // GET: ProducsController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            var categories = _db.GetAllCategories();
+            var categories = await _db.GetAllCategories();
 
             List<CategoryViewModel> categoriesView = new List<CategoryViewModel>();
             for (int i = 0; i < categories.Count; i++)
@@ -127,12 +127,12 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult Create(ProductCreateViewModel model)
+        public async Task<ActionResult> Create(ProductCreateViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var dublicate = _db.GetProductByName(model.Name);
+            var dublicate = await _db.GetProductByName(model.Name);
 
             if (dublicate.Count > 0)
             {
@@ -155,10 +155,10 @@ namespace MVC_Shoping_Card.Controllers
 
         [Authorize(Roles = "Admin")]
         // GET: ProducsController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var product = _db.GetProductById(id).FirstOrDefault();
-            var categories = _db.GetAllCategories();
+            var product = (await _db.GetProductById(id)).FirstOrDefault();
+            var categories = await _db.GetAllCategories();
 
             List<CategoryViewModel> categoriesView = new List<CategoryViewModel>();
             for (int i = 0; i < categories.Count; i++)
@@ -190,12 +190,13 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult Edit(ProductCreateViewModel model)
+        public async Task<ActionResult> Edit(ProductCreateViewModel model)
         {
             if(!ModelState.IsValid)
                 return View(model);
 
-            var dublicate = _db.GetProductByName(model.Name);
+            var dublicate = await _db.GetProductByName(model.Name);
+
             if(dublicate.Count > 1)
             {
                 ModelState.AddModelError("Name", "This Product Is Already Exists");
@@ -220,12 +221,12 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult AddToCart(int  id)
+        public async Task<ActionResult> AddToCart(int  id)
         {
             int userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var purchase = _db.GetSpecificUncompletedPurchaseByUserId(userId, id).FirstOrDefault();
-            var product = _db.GetProductById(id).FirstOrDefault();
+            var purchase = (await _db.GetSpecificUncompletedPurchaseByUserId(userId, id)).FirstOrDefault();
+            var product = (await _db.GetProductById(id)).FirstOrDefault();
 
             if (product == null)
             {
@@ -257,11 +258,11 @@ namespace MVC_Shoping_Card.Controllers
 
         [Authorize(Roles = "Admin")]
         // GET: ProducsController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var product = _db.GetProductById(id).FirstOrDefault();
+            var product = (await _db.GetProductById(id)).FirstOrDefault();
 
-            var catgory = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+            var catgory = (await _db.GetCategoryById(product.CategoryId)).FirstOrDefault();
             
 
             ProductViewModel productView = new ProductViewModel()

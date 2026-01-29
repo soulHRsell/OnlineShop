@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Shoping_Card_DB_Connection.Databases
 {
-    public class SqlDataAccess : ISqlDataAccess
+    public class SqlDataAccess :    ISqlDataAccess
     {
         private readonly IConfiguration _config;
 
@@ -14,7 +14,7 @@ namespace Shoping_Card_DB_Connection.Databases
             _config = config;
         }
 
-        public List<T> LoadData<T, U>(string sqlStatement,
+        public async Task<List<T>> LoadData<T, U>(string sqlStatement,
                                      U parameters,
                                      string connectionStringName,
                                      bool isStoredProcedure)
@@ -27,12 +27,11 @@ namespace Shoping_Card_DB_Connection.Databases
 
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
-                List<T> rows = connection.Query<T>(sqlStatement, parameters, commandType: commandType).ToList();
-                return rows;
+                return (List<T>)await connection.QueryAsync<T>(sqlStatement, parameters, commandType: commandType);
             }
         }
 
-        public void SaveData<T>(string sqlstatement,
+        public async Task SaveData<T>(string sqlstatement,
                                 T parameters,
                                 string connectionStringName,
                                 bool isStoredProcedure)
@@ -47,7 +46,7 @@ namespace Shoping_Card_DB_Connection.Databases
 
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
-                connection.Execute(sqlstatement, parameters, commandType: commandType);
+                await connection.ExecuteAsync(sqlstatement, parameters, commandType: commandType);
             }
         }
     }

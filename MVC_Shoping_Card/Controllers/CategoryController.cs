@@ -21,17 +21,17 @@ namespace MVC_Shoping_Card.Controllers
 
         // GET: CategoryController
         [Authorize(Roles = "Admin")]
-        public ActionResult Index(string? name, int? page)
+        public async Task<ActionResult> Index(string? name, int? page)
         {
             List<CategoryModel> categories = new List<CategoryModel>();
 
             if (String.IsNullOrEmpty(name))
             {
-                categories = _db.GetAllCategories();
+                categories = await _db.GetAllCategories();
             }
             else
             {
-                categories = _db.SearchCategory(name);
+                categories = await _db.SearchCategory(name);
             }
 
             List<CategoryViewModel> categoriesView = new List<CategoryViewModel>();
@@ -66,12 +66,12 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult Create(CategoryViewModel model)
+        public async Task<ActionResult> Create(CategoryViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var dublicate = _db.GetCategoryByName(model.Name);
+            var dublicate = await _db.GetCategoryByName(model.Name);
 
             if (dublicate.Count > 0)
             {
@@ -86,9 +86,9 @@ namespace MVC_Shoping_Card.Controllers
 
         // GET: CategoryController/Edit/5
         [Authorize(Roles = "Admin")]
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var category = _db.GetCategoryById(id).FirstOrDefault();
+            var category = (await _db.GetCategoryById(id)).FirstOrDefault();
             CategoryViewModel categoryView = new CategoryViewModel()
             {
                 Id = category.Id,
@@ -102,12 +102,12 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult Edit(CategoryViewModel model)
+        public async Task<ActionResult> Edit(CategoryViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var dublicate = _db.GetCategoryByName(model.Name);
+            var dublicate = await _db.GetCategoryByName(model.Name);
 
             if (dublicate.Count > 1)
             {
@@ -128,9 +128,9 @@ namespace MVC_Shoping_Card.Controllers
 
         // GET: CategoryController/Delete/5
         [Authorize(Roles = "Admin")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var category = _db.GetCategoryById(id).FirstOrDefault();
+            var category = (await _db.GetCategoryById(id)).FirstOrDefault();
             CategoryViewModel categoryview = new CategoryViewModel()
             {
                 Id = category.Id,
@@ -144,9 +144,9 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult DeleteConfirm(int id)
+        public async Task<ActionResult> DeleteConfirm(int id)
         {
-            var category = _db.GetCategoryById(id).FirstOrDefault();
+            var category = (await _db.GetCategoryById(id)).FirstOrDefault();
 
             if (category == null)
             {

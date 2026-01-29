@@ -110,5 +110,6 @@
   <ItemGroup>
     <None Include="PublishProfiles\Shoping_Card_DB.publish.xml" />
     <None Include="ComparisonProfile\SqlSchemaCompare.scmp" />
+    <None Include="Shoping_Card_DB.publish.xml" />
   </ItemGroup>
 </Project>

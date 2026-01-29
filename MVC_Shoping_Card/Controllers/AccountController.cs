@@ -19,10 +19,10 @@ namespace MVC_Shoping_Card.Controllers
         }
 
         [Authorize]
-        public ActionResult Profile()
+        public async Task<ActionResult> Profile()
         {
             var userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = _db.GetUserById(userId).FirstOrDefault();
+            var user = (await _db.GetUserById(userId)).FirstOrDefault();
             var userView = new UserViewModel()
             {
                 Username = user.Username,
@@ -39,19 +39,19 @@ namespace MVC_Shoping_Card.Controllers
             return View(userView);
         }
 
-        public ActionResult Cart()
+        public async Task<ActionResult> Cart()
         {
             int userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var cartItems = _db.GetUncompletedPurchasesByUserId(userId);
+            var cartItems = await _db.GetUncompletedPurchasesByUserId(userId);
 
             List<PurchaseViewModel> cartItemsView = new List<PurchaseViewModel>();
 
             for (int i = 0; i < cartItems.Count; i++)
             {
-                var product = _db.GetProductById(cartItems[i].ProductId).FirstOrDefault();
+                var product = (await _db.GetProductById(cartItems[i].ProductId)).FirstOrDefault();
 
-                var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+                var category = (await _db.GetCategoryById(product.CategoryId)).FirstOrDefault(); 
 
                 PurchaseViewModel item = new PurchaseViewModel()
                 {
@@ -87,7 +87,7 @@ namespace MVC_Shoping_Card.Controllers
         }
 
         [Authorize]
-        public ActionResult PurchaseHistory(int? id, string? name, string? status, int? page)
+        public async Task<ActionResult> PurchaseHistory(int? id, string? name, string? status, int? page)
         {
             int pageSize = 10;
             int pageNumber = page ?? 1;
@@ -97,21 +97,20 @@ namespace MVC_Shoping_Card.Controllers
 
             if (String.IsNullOrEmpty(name) && id == null && String.IsNullOrEmpty(status))
             {
-                purchases = _db.GetPurchaseByUserId(userId);
+                purchases = await _db.GetPurchaseByUserId(userId);
             }
             else
             {
-                purchases = _db.SearchCompletedAndSentPurchasesByUserId(id ?? 0, name, status, userId);
+                purchases = await _db.SearchCompletedAndSentPurchasesByUserId(id ?? 0, name, status, userId);
             }
 
             List<PurchaseViewModel> purchasesView = new List<PurchaseViewModel>();
 
             for (int i = 0; i < purchases.Count; i++)
             {
-                var product = _db.GetProductById(purchases[i].ProductId).FirstOrDefault();
+                var product = (await _db.GetProductById(purchases[i].ProductId))?.FirstOrDefault();
 
-                var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
-
+                var category = (await _db.GetCategoryById(product.CategoryId)).FirstOrDefault();
 
                 PurchaseViewModel item = new PurchaseViewModel()
                 {
@@ -151,18 +150,18 @@ namespace MVC_Shoping_Card.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public ActionResult ManagePurchases(int? id, string? name, string? status, int? page)
+        public async Task<ActionResult> ManagePurchases(int? id, string? name, string? status, int? page)
         {
             int pageSize = 10;
             int pageNumber = page ?? 1;
 
-            var purchases = _db.AdminSearchPurchases(id, name, status);
+            var purchases = await _db.AdminSearchPurchases(id, name, status);
 
-            var purchaseViewList = purchases.Select(p =>
+            var purchaseViewTasks = purchases.Select(async p =>
             {
-                var product = _db.GetProductById(p.ProductId).FirstOrDefault();
-                var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
-                var user = _db.GetUserById(p.UserId).FirstOrDefault();
+                var product = (await _db.GetProductById(p.ProductId)).FirstOrDefault();
+                var category = (await _db.GetCategoryById(product.CategoryId)).FirstOrDefault();
+                var user = (await _db.GetUserById(p.UserId)).FirstOrDefault();
 
                 return new PurchaseViewModel
                 {
@@ -183,6 +182,8 @@ namespace MVC_Shoping_Card.Controllers
                     }
                 };
             }).ToList();
+
+            var purchaseViewList = await Task.WhenAll(purchaseViewTasks);
 
             ViewBag.Id = id;
             ViewBag.Name = name;
@@ -208,12 +209,12 @@ namespace MVC_Shoping_Card.Controllers
         // POST: AccountController/Create for Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var dublicate = _db.GetUserByUsername(model.Username);
+            var dublicate = await _db.GetUserByUsername(model.Username);
 
             if (dublicate.Count > 0)
             {
@@ -250,7 +251,7 @@ namespace MVC_Shoping_Card.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, bool rememberMe)
         {
-            var user = _db.GetUserByUsername(model.Username).FirstOrDefault();
+            var user = (await _db.GetUserByUsername(model.Username)).FirstOrDefault();
 
             if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
             {
@@ -290,10 +291,10 @@ namespace MVC_Shoping_Card.Controllers
 
         // GET: AccountController/Edit/5
         [Authorize]
-        public ActionResult Edit()
+        public async Task<ActionResult> Edit()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            UserModel dbuser = _db.GetUserById(Int32.Parse(userId)).FirstOrDefault();
+            UserModel dbuser = (await _db.GetUserById(Int32.Parse(userId))).FirstOrDefault();
 
             if (dbuser == null)
             {
@@ -320,13 +321,13 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Edit(UserViewModel model)
+        public async Task<ActionResult> Edit(UserViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
 
-            var dublicate = _db.GetUserByUsername(model.Username);
+            var dublicate = await _db.GetUserByUsername(model.Username);
 
             if(dublicate.Count > 1)
             {
@@ -356,13 +357,13 @@ namespace MVC_Shoping_Card.Controllers
         }
 
         [Authorize]
-        public ActionResult CartItemDelete(int id)
+        public async Task<ActionResult> CartItemDelete(int id)
         {
-            var purchase = _db.GetPuchaseById(id).FirstOrDefault();
+            var purchase = (await _db.GetPuchaseById(id)).FirstOrDefault();
 
-            var product = _db.GetProductById(purchase.ProductId).FirstOrDefault();
+            var product = (await _db.GetProductById(purchase.ProductId)).FirstOrDefault();
 
-            var category = _db.GetCategoryById(product.CategoryId).FirstOrDefault();
+            var category = (await _db.GetCategoryById(product.CategoryId)).FirstOrDefault();
 
             PurchaseViewModel purchaseView = new PurchaseViewModel()
             {
@@ -397,9 +398,9 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult CartItemDeleteConfirm(int id)
+        public async Task<ActionResult> CartItemDeleteConfirm(int id)
         {
-            var purchase = _db.GetPuchaseById(id).FirstOrDefault();
+            var purchase = (await _db.GetPuchaseById(id)).FirstOrDefault();
 
             if (purchase == null)
             {
@@ -413,9 +414,9 @@ namespace MVC_Shoping_Card.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult UpdateQuantity(int id, int quantity)
+        public async Task<ActionResult> UpdateQuantity(int id, int quantity)
         {
-            var purchase = _db.GetPuchaseById(id).FirstOrDefault();
+            var purchase = (await _db.GetPuchaseById(id)).FirstOrDefault();
 
             if (purchase == null)
             {
