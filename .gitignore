@@ -417,3 +417,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 /Shoping_Card_DB/ComparisonProfile/SqlSchemaCompare.scmp
+/MVC_Shoping_Card/appsettings.Development.json
