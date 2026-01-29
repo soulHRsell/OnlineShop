@@ -1,2 +1,2 @@
 # MVC_Shoping_Card
-Simple .Net  MVC Shoping card Project
+.Net OnlineShop Project With SqlServer DataBase And Dapper ORM For Resume
